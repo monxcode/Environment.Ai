@@ -1,336 +1,478 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Udaipur Smart Citizen Hub | GDG Hackathon</title>
+    <title>EcoGuard // Safety OS</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Outfit:wght@300;400;600;800&display=swap');
         
+        :root {
+            --neon-emerald: #10b981;
+            --neon-purple: #8b5cf6;
+            --bg-dark: #09090b;
+        }
+
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8fafc;
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-dark);
+            color: #fafafa;
+            overflow-x: hidden;
         }
 
-        .glass-card {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+        h1, h2, h3, h4, .font-heading {
+            font-family: 'Space Grotesk', sans-serif;
         }
 
-        .status-dot {
-            height: 10px;
-            width: 10px;
-            border-radius: 50%;
-            display: inline-block;
-            animation: pulse 2s infinite;
+        .bento-card {
+            background: rgba(24, 24, 27, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        @keyframes pulse {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        .bento-card:hover {
+            border-color: rgba(16, 185, 129, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
         }
 
-        .custom-scroll::-webkit-scrollbar {
-            width: 6px;
+        .neon-text {
+            text-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
         }
-        .custom-scroll::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 10px;
+
+        .search-ring:focus-within {
+            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.3);
+        }
+
+        .alert-shimmer {
+            background: linear-gradient(90deg, #ef4444 0%, #7f1d1d 50%, #ef4444 100%);
+            background-size: 200% auto;
+            animation: shimmer 3s linear infinite;
+        }
+
+        @keyframes shimmer {
+            to { background-position: 200% center; }
+        }
+
+        .loader-dots span {
+            animation: bounce 0.6s infinite alternate;
+        }
+        .loader-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .loader-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes bounce {
+            to { transform: translateY(-4px); opacity: 0.5; }
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #09090b; }
+        ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 10px; }
+        
+        .ai-glow {
+            box-shadow: inset 0 0 20px rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+
+        /* Suggestion Dropdown Styling */
+        #suggestions {
+            scrollbar-width: none;
+        }
+        #suggestions::-webkit-scrollbar {
+            display: none;
         }
     </style>
 </head>
-<body class="text-slate-800">
+<body class="selection:bg-emerald-500/30">
 
-    <!-- Navbar -->
-    <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16 items-center">
-                <div class="flex items-center gap-2">
-                    <div class="bg-emerald-600 p-2 rounded-lg">
-                        <i class="fas fa-city text-white text-xl"></i>
-                    </div>
-                    <span class="font-bold text-xl tracking-tight">Smart<span class="text-emerald-600">Udaipur</span></span>
-                </div>
-                <div class="hidden md:flex space-x-8 font-medium">
-                    <a href="#" class="text-emerald-600 border-b-2 border-emerald-600">Dashboard</a>
-                    <a href="#" class="hover:text-emerald-600 transition">Lake Watch</a>
-                    <a href="#" class="hover:text-emerald-600 transition">Leaderboard</a>
-                    <a href="#" class="hover:text-emerald-600 transition">Official Contact</a>
-                </div>
-                <button onclick="openReportModal()" class="bg-emerald-600 text-white px-5 py-2 rounded-full font-semibold hover:bg-emerald-700 transition shadow-lg shadow-emerald-200">
-                    Report Issue
-                </button>
-            </div>
-        </div>
-    </nav>
+    <div class="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] bg-emerald-900/20 blur-[120px] rounded-full z-[-1]"></div>
+    <div class="fixed bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-900/10 blur-[120px] rounded-full z-[-1]"></div>
 
-    <main class="max-w-7xl mx-auto px-4 py-8">
-        
-        <!-- Dashboard Header -->
-        <div class="mb-8">
-            <h1 class="text-3xl font-bold text-slate-900">City Command Center</h1>
-            <p class="text-slate-500">Real-time monitoring of Udaipur Municipal Corporation (UMC)</p>
-        </div>
+    <div class="max-w-6xl mx-auto px-6 py-10">
+        <!-- Navigation -->
+        <nav class="flex flex-col md:flex-row justify-between items-center gap-6 mb-12">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.4)]">
+                    <i class="fas fa-bolt-lightning text-zinc-950 text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold tracking-tight">EcoGuard <span class="text-emerald-500">v2.5</span></h1>
+                    <p class="text-xs text-zinc-500 font-medium tracking-widest uppercase">Safety OS // Gemini AI</p>
+                </div>
+            </div>
 
-        <!-- Real Stats -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
-            <div class="glass-card p-6 rounded-2xl flex items-center gap-4">
-                <div class="bg-blue-100 p-3 rounded-xl text-blue-600"><i class="fas fa-wind fa-2x"></i></div>
-                <div>
-                    <p class="text-sm text-slate-500 font-medium">Udaipur AQI (Surajpole)</p>
-                    <h3 class="text-2xl font-bold">78 <span class="text-sm font-normal text-amber-600">(Moderate)</span></h3>
+            <div class="flex items-center gap-3 w-full md:w-auto relative">
+                <div class="relative flex-1 md:flex-none search-ring rounded-2xl bg-zinc-900/50 border border-zinc-800 backdrop-blur-md overflow-hidden transition-all">
+                    <input type="text" id="cityInput" autocomplete="off" placeholder="Locate city..." 
+                        class="bg-transparent px-5 py-4 w-full md:w-72 outline-none text-sm placeholder:text-zinc-600">
                 </div>
-            </div>
-            <div class="glass-card p-6 rounded-2xl flex items-center gap-4">
-                <div class="bg-emerald-100 p-3 rounded-xl text-emerald-600"><i class="fas fa-water fa-2x"></i></div>
-                <div>
-                    <p class="text-sm text-slate-500 font-medium">Lake Level (Fateh Sagar)</p>
-                    <h3 class="text-2xl font-bold">12.4 ft</h3>
-                </div>
-            </div>
-            <div class="glass-card p-6 rounded-2xl flex items-center gap-4">
-                <div class="bg-amber-100 p-3 rounded-xl text-amber-600"><i class="fas fa-exclamation-triangle fa-2x"></i></div>
-                <div>
-                    <p class="text-sm text-slate-500 font-medium">Open Grievances</p>
-                    <h3 class="text-2xl font-bold" id="active-issues-count">142</h3>
-                </div>
-            </div>
-            <div class="glass-card p-6 rounded-2xl flex items-center gap-4">
-                <div class="bg-purple-100 p-3 rounded-xl text-purple-600"><i class="fas fa-users fa-2x"></i></div>
-                <div>
-                    <p class="text-sm text-slate-500 font-medium">Active Volunteers</p>
-                    <h3 class="text-2xl font-bold">842</h3>
-                </div>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            
-            <!-- IoT Bin Monitoring -->
-            <div class="lg:col-span-2 glass-card rounded-2xl p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-xl font-bold flex items-center gap-2">
-                        <i class="fas fa-microchip text-emerald-600"></i> Smart Bin Status (Surajpole to Chetak)
-                    </h2>
-                    <span class="flex items-center gap-2 text-xs font-semibold text-emerald-600 uppercase">
-                        <span class="status-dot bg-emerald-500"></span> Live IoT Data
-                    </span>
+                <!-- Suggestions Dropdown -->
+                <div id="suggestions" class="absolute top-full left-0 w-full md:w-72 mt-2 bg-zinc-900/90 border border-zinc-800 backdrop-blur-xl rounded-2xl shadow-2xl z-[100] hidden max-h-60 overflow-y-auto">
+                    <!-- Dynamic Items -->
                 </div>
                 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="bins-container">
-                    <!-- Bins injected here -->
-                </div>
-            </div>
-
-            <!-- Real-time Feed -->
-            <div class="glass-card rounded-2xl p-6">
-                <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
-                    <i class="fas fa-rss text-amber-500"></i> Citizen Reports Feed
-                </h2>
-                <div class="space-y-4 max-h-[500px] overflow-y-auto custom-scroll pr-2" id="reports-list">
-                    <!-- Reports injected here -->
-                </div>
-            </div>
-        </div>
-
-        <!-- Leaderboard -->
-        <div class="mt-10 glass-card rounded-2xl p-8">
-             <h2 class="text-xl font-bold mb-8 text-center">Clean Udaipur Champions</h2>
-             <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
-                <div class="text-center p-4 bg-white/50 rounded-xl">
-                    <div class="w-12 h-12 bg-emerald-600 rounded-full mx-auto mb-2 flex items-center justify-center font-bold text-white shadow-lg">HS</div>
-                    <p class="font-bold text-sm">Harsh Sharma</p>
-                    <p class="text-xs text-emerald-600">2,450 pts</p>
-                </div>
-                <div class="text-center p-4 bg-white/50 rounded-xl">
-                    <div class="w-12 h-12 bg-slate-200 rounded-full mx-auto mb-2 flex items-center justify-center font-bold text-slate-600 shadow-sm">VP</div>
-                    <p class="font-bold text-sm">Vinay Paliwal</p>
-                    <p class="text-xs text-emerald-600">1,820 pts</p>
-                </div>
-                <div class="text-center p-4 bg-white/50 rounded-xl">
-                    <div class="w-12 h-12 bg-slate-200 rounded-full mx-auto mb-2 flex items-center justify-center font-bold text-slate-600 shadow-sm">DK</div>
-                    <p class="font-bold text-sm">Deepak K.</p>
-                    <p class="text-xs text-emerald-600">1,650 pts</p>
-                </div>
-                <div class="text-center p-4 bg-white/50 rounded-xl">
-                    <div class="w-12 h-12 bg-slate-200 rounded-full mx-auto mb-2 flex items-center justify-center font-bold text-slate-600 shadow-sm">RJ</div>
-                    <p class="font-bold text-sm">Riya Jain</p>
-                    <p class="text-xs text-emerald-600">1,400 pts</p>
-                </div>
-                <div class="text-center p-4 bg-white/50 rounded-xl">
-                    <div class="w-12 h-12 bg-slate-200 rounded-full mx-auto mb-2 flex items-center justify-center font-bold text-slate-600 shadow-sm">MK</div>
-                    <p class="font-bold text-sm">Manish K.</p>
-                    <p class="text-xs text-emerald-600">1,210 pts</p>
-                </div>
-             </div>
-        </div>
-    </main>
-
-    <!-- Report Modal -->
-    <div id="reportModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-[100] p-4 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
-            <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-                <h3 class="text-xl font-bold">Report Cleanliness Issue</h3>
-                <button onclick="closeReportModal()" class="text-slate-400 hover:text-slate-600"><i class="fas fa-times"></i></button>
-            </div>
-            <form id="issueForm" class="p-6 space-y-4">
-                <div>
-                    <label class="block text-sm font-semibold mb-1 text-slate-700">Exact Location</label>
-                    <select id="issueLocation" class="w-full border border-slate-200 rounded-lg p-3 focus:ring-2 focus:ring-emerald-500 outline-none bg-white">
-                        <option>Fateh Sagar Lake Front</option>
-                        <option>Jagdish Temple Stairs</option>
-                        <option>City Palace Entry Road</option>
-                        <option>Chetak Circle Market</option>
-                        <option>Surajpole Choraha</option>
-                        <option>Sukhadia Circle Garden</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold mb-1 text-slate-700">Issue Category</label>
-                    <select id="issueType" class="w-full border border-slate-200 rounded-lg p-3 focus:ring-2 focus:ring-emerald-500 outline-none bg-white">
-                        <option>Garbage Overflow</option>
-                        <option>Lake Water Pollution</option>
-                        <option>Unattended Debris</option>
-                        <option>Public Toilet Cleaning</option>
-                    </select>
-                </div>
-                <div class="bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl p-6 text-center">
-                    <i class="fas fa-camera text-emerald-600 text-2xl mb-2"></i>
-                    <p class="text-sm font-medium text-slate-600">Upload Photo of the Site</p>
-                    <p class="text-[10px] text-slate-400 mt-1">Geotagging will be enabled automatically</p>
-                </div>
-                <button type="submit" class="w-full bg-emerald-600 text-white py-4 rounded-xl font-bold shadow-lg shadow-emerald-200 hover:scale-[1.02] active:scale-[0.98] transition">
-                    Submit to UMC Dashboard
+                <button onclick="getWeather()" id="searchBtn"
+                    class="bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold px-6 py-4 rounded-2xl transition-all shadow-[0_0_20px_rgba(16,185,129,0.2)] active:scale-95 flex items-center gap-2">
+                    <i class="fas fa-location-arrow text-xs"></i>
+                    <span id="btnText">Track</span>
+                    <div id="loader" class="loader-dots hidden flex gap-1">
+                        <span class="w-1.5 h-1.5 bg-zinc-950 rounded-full"></span>
+                        <span class="w-1.5 h-1.5 bg-zinc-950 rounded-full"></span>
+                        <span class="w-1.5 h-1.5 bg-zinc-950 rounded-full"></span>
+                    </div>
                 </button>
-            </form>
+            </div>
+        </nav>
+
+        <!-- Main Dashboard -->
+        <main id="mainGrid" class="hidden animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                
+                <!-- Main Weather Hero -->
+                <div class="md:col-span-8 bento-card p-8 flex flex-col md:flex-row justify-between items-center relative overflow-hidden">
+                    <div class="relative z-10">
+                        <div class="flex items-center gap-2 text-zinc-400 mb-2">
+                            <i class="fas fa-map-marker-alt text-emerald-500"></i>
+                            <span id="locationName" class="font-medium tracking-wider">---</span>
+                        </div>
+                        <h2 id="tempValue" class="text-8xl md:text-9xl font-extrabold tracking-tighter neon-text mb-4">--°</h2>
+                        <div class="flex items-center gap-3">
+                            <span id="conditionValue" class="px-4 py-1.5 bg-zinc-800 rounded-full text-xs font-bold uppercase tracking-wider text-emerald-400 border border-emerald-500/20">--</span>
+                            <span id="currentDate" class="text-zinc-500 text-xs font-medium">---</span>
+                        </div>
+                    </div>
+                    <div id="weatherIcon" class="text-[12rem] text-zinc-800/50 absolute right-[-2rem] bottom-[-2rem] md:static md:text-9xl transition-all duration-1000">
+                        <i class="fas fa-cloud"></i>
+                    </div>
+                </div>
+
+                <!-- Safety Index Meter -->
+                <div class="md:col-span-4 bento-card p-8 flex flex-col items-center justify-center text-center">
+                    <h3 class="text-sm font-bold uppercase tracking-widest text-zinc-500 mb-6">Safety Index</h3>
+                    <div class="relative w-40 h-40">
+                        <svg class="w-full h-full transform -rotate-90">
+                            <circle cx="80" cy="80" r="70" fill="transparent" stroke="#18181b" stroke-width="12"></circle>
+                            <circle id="scoreRing" cx="80" cy="80" r="70" fill="transparent" stroke="#10b981" stroke-width="12" 
+                                stroke-dasharray="440" stroke-dashoffset="440" stroke-linecap="round" class="transition-all duration-1000"></circle>
+                        </svg>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center">
+                            <span id="scoreText" class="text-4xl font-bold">--</span>
+                            <span class="text-[10px] text-zinc-500 font-bold uppercase">Safe Range</span>
+                        </div>
+                    </div>
+                    <p id="safetyLevel" class="mt-6 text-sm font-medium text-emerald-500">Calculating risk vectors...</p>
+                </div>
+
+                <!-- AI ADVISOR BENTO -->
+                <div class="md:col-span-12 bento-card p-8 ai-glow relative overflow-hidden">
+                    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative z-10">
+                        <div class="flex items-center gap-4">
+                            <div class="w-14 h-14 rounded-2xl bg-purple-500/20 flex items-center justify-center text-purple-400 border border-purple-500/30">
+                                <i class="fas fa-brain-circuit text-2xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-purple-400">AI Strategic Advisor</h3>
+                                <p class="text-xs text-zinc-500 font-medium tracking-widest uppercase">Protocol Optimization Engine</p>
+                            </div>
+                        </div>
+                        <div id="aiLoader" class="hidden flex items-center gap-3">
+                            <span class="text-xs text-purple-500 font-bold animate-pulse">ANALYZING SIGNAL...</span>
+                        </div>
+                    </div>
+                    <div id="aiMessageContainer" class="mt-8 p-6 bg-zinc-950/40 rounded-2xl border border-zinc-800/50">
+                        <p id="aiContent" class="text-zinc-300 text-lg leading-relaxed font-medium">Awaiting sensor data to initialize AI advisory...</p>
+                    </div>
+                </div>
+
+                <!-- AQI Monitor -->
+                <div class="md:col-span-4 bento-card p-6 border-l-4 border-l-purple-500">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-400">
+                            <i class="fas fa-mask-face"></i>
+                        </div>
+                        <span id="aqiStatus" class="text-[10px] font-black uppercase bg-zinc-800 text-zinc-400 px-2 py-1 rounded">--</span>
+                    </div>
+                    <p class="text-zinc-500 text-[10px] font-bold uppercase tracking-widest">Air Quality Index</p>
+                    <h4 id="aqiValue" class="text-3xl font-bold mt-1 tracking-tight">--</h4>
+                    <p class="text-[11px] text-zinc-500 mt-2 leading-relaxed" id="aqiDesc">Air concentration data syncing...</p>
+                </div>
+
+                <!-- Dynamic Alert Box -->
+                <div id="alertBox" class="md:col-span-8 hidden">
+                    <div class="alert-shimmer p-[2px] rounded-3xl h-full">
+                        <div class="bg-zinc-950 rounded-[22px] p-6 flex flex-col md:flex-row items-center justify-between gap-6 h-full">
+                            <div class="flex items-center gap-6">
+                                <div class="w-12 h-12 rounded-2xl bg-red-500/10 flex items-center justify-center shrink-0">
+                                    <i class="fas fa-triangle-exclamation text-red-500 text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h4 id="alertTitle" class="text-lg font-bold text-red-500 uppercase">Alert Detected</h4>
+                                    <p id="alertDesc" class="text-zinc-400 text-sm">Critical environment anomaly identified.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Stats -->
+                <div class="md:col-span-4 bento-card p-6 flex items-center gap-5">
+                    <div class="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400">
+                        <i class="fas fa-droplet"></i>
+                    </div>
+                    <div>
+                        <p class="text-zinc-500 text-[10px] font-bold uppercase tracking-widest">Humidity</p>
+                        <h4 id="humidityValue" class="text-xl font-bold">--%</h4>
+                    </div>
+                </div>
+
+                <div class="md:col-span-4 bento-card p-6 flex items-center gap-5">
+                    <div class="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-400">
+                        <i class="fas fa-wind"></i>
+                    </div>
+                    <div>
+                        <p class="text-zinc-500 text-[10px] font-bold uppercase tracking-widest">Wind Flow</p>
+                        <h4 id="windValue" class="text-xl font-bold">-- km/h</h4>
+                    </div>
+                </div>
+
+                <div class="md:col-span-4 bento-card p-6 flex items-center gap-5">
+                    <div class="w-12 h-12 rounded-xl bg-cyan-500/10 flex items-center justify-center text-cyan-400">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <div>
+                        <p class="text-zinc-500 text-[10px] font-bold uppercase tracking-widest">Visibility</p>
+                        <h4 id="visibilityValue" class="text-xl font-bold">-- km</h4>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+
+        <!-- Initial State -->
+        <div id="emptyState" class="flex flex-col items-center justify-center py-32 text-center">
+            <div class="w-32 h-32 bg-zinc-900 rounded-[3rem] flex items-center justify-center mb-8 border border-zinc-800 relative">
+                <i class="fas fa-radar text-4xl text-zinc-700 animate-pulse"></i>
+                <div class="absolute inset-0 border-2 border-emerald-500/20 rounded-[3rem] animate-ping"></div>
+            </div>
+            <h2 class="text-2xl font-bold mb-2 tracking-tight">Awaiting Signal</h2>
+            <p class="text-zinc-500 text-sm max-w-xs">Enter a global location to initialize multi-spectrum monitoring.</p>
         </div>
     </div>
 
-    <!-- Toast -->
-    <div id="successToast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-8 py-4 rounded-2xl hidden z-[101] shadow-2xl flex items-center gap-3">
-        <div class="bg-emerald-500 p-1 rounded-full"><i class="fas fa-check text-xs"></i></div>
-        <span>Reported to Municipal Authorities! <b>+50 Points</b></span>
+    <div id="errorBox" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-red-500 text-zinc-950 font-bold px-8 py-4 rounded-2xl shadow-2xl hidden z-50 flex items-center gap-3">
+        <i class="fas fa-circle-xmark"></i>
+        <span id="errorMsg">Signal Lost.</span>
     </div>
 
     <script>
-        // Real-world Udaipur Bin Locations
-        const binData = [
-            { id: 1, location: "Fateh Sagar Pal (Entry)", fill: 82, type: "Plastic/Recyclable" },
-            { id: 2, location: "Chetak Circle Market", fill: 45, type: "Mixed Waste" },
-            { id: 3, location: "Jagdish Chowk Area", fill: 12, type: "Organic/Wet" },
-            { id: 4, location: "City Palace Parking", fill: 94, type: "Dry Waste" },
-            { id: 5, location: "Sukhadia Circle", fill: 35, type: "Recyclable" },
-            { id: 6, location: "Udaipole Bus Stand", fill: 68, type: "Mixed Waste" }
-        ];
+        const WEATHER_KEY = "e0e63578e29f0d3ac7359000742b5c8f"; 
+        const API_KEY = ""; // Managed by environment
+        const FALLBACK_KEY = "AIzaSyA199NrJ6SjElZ_7vLD1tCLs4EhRHmHpSE";
 
-        // Real-world scenario based Reports
-        let reports = [
-            { id: 101, user: "Ankit Chouhan", type: "Water Pollution", location: "Swaroop Sagar Lake", status: "In Progress", time: "15m ago" },
-            { id: 102, user: "Megha Mehta", type: "Garbage", location: "Hathi Pole Market", status: "Resolved", time: "1h ago" },
-            { id: 103, user: "Suresh P.", type: "Toilet Cleaning", location: "Gulab Bagh", status: "Pending", time: "4m ago" },
-            { id: 104, user: "Karan Vyas", type: "Overflow", location: "Bapu Bazar Choraha", status: "In Progress", time: "3h ago" }
-        ];
+        const cityInput = document.getElementById('cityInput');
+        const suggestionsBox = document.getElementById('suggestions');
+        const loader = document.getElementById('loader');
+        const btnText = document.getElementById('btnText');
+        const searchBtn = document.getElementById('searchBtn');
 
-        function renderBins() {
-            const container = document.getElementById('bins-container');
-            container.innerHTML = binData.map(bin => {
-                const isFull = bin.fill > 80;
-                const colorClass = isFull ? 'bg-red-500' : bin.fill > 50 ? 'bg-amber-500' : 'bg-emerald-500';
-                return `
-                    <div class="border border-slate-100 rounded-2xl p-4 bg-white shadow-sm hover:shadow-md transition cursor-default">
-                        <div class="flex justify-between items-start mb-3">
-                            <div>
-                                <h4 class="font-bold text-sm text-slate-800">${bin.location}</h4>
-                                <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">${bin.type}</p>
-                            </div>
-                            <span class="text-xs font-bold ${isFull ? 'text-red-500' : 'text-slate-600'}">${bin.fill}%</span>
-                        </div>
-                        <div class="w-full bg-slate-100 rounded-full h-3 mb-2 overflow-hidden">
-                            <div class="${colorClass} h-full rounded-full transition-all duration-1000" style="width: ${bin.fill}%"></div>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <span class="text-[9px] text-slate-400 italic">Last signal: 2 mins ago</span>
-                            ${isFull ? '<span class="flex items-center gap-1 text-[10px] text-red-600 font-bold bg-red-50 px-2 py-0.5 rounded-md"><i class="fas fa-truck-pickup"></i> Routing Truck</span>' : ''}
-                        </div>
-                    </div>
+        let debounceTimer;
+
+        // --- Auto-Suggestion Logic ---
+        cityInput.addEventListener('input', () => {
+            const query = cityInput.value.trim();
+            clearTimeout(debounceTimer);
+            
+            if (query.length < 3) {
+                suggestionsBox.classList.add('hidden');
+                return;
+            }
+
+            debounceTimer = setTimeout(async () => {
+                try {
+                    const res = await fetch(`https://api.openweathermap.org/geo/1.0/direct?q=${query}&limit=5&appid=${WEATHER_KEY}`);
+                    const data = await res.json();
+                    
+                    if (data && data.length > 0) {
+                        renderSuggestions(data);
+                    } else {
+                        suggestionsBox.classList.add('hidden');
+                    }
+                } catch (err) {
+                    console.error("Suggestion Error", err);
+                }
+            }, 300);
+        });
+
+        function renderSuggestions(cities) {
+            suggestionsBox.innerHTML = '';
+            cities.forEach(city => {
+                const item = document.createElement('div');
+                item.className = "px-5 py-3 hover:bg-emerald-500/10 cursor-pointer transition-colors border-b border-zinc-800/50 last:border-0 flex flex-col";
+                item.innerHTML = `
+                    <span class="text-sm font-bold text-zinc-100">${city.name}</span>
+                    <span class="text-[10px] text-zinc-500 uppercase font-bold tracking-tighter">${city.state ? city.state + ', ' : ''}${city.country}</span>
                 `;
-            }).join('');
+                item.onclick = () => {
+                    cityInput.value = `${city.name}, ${city.country}`;
+                    suggestionsBox.classList.add('hidden');
+                    getWeather();
+                };
+                suggestionsBox.appendChild(item);
+            });
+            suggestionsBox.classList.remove('hidden');
         }
 
-        function renderReports() {
-            const list = document.getElementById('reports-list');
-            list.innerHTML = reports.map(r => `
-                <div class="p-4 bg-white border border-slate-50 rounded-2xl shadow-sm hover:border-emerald-100 transition">
-                    <div class="flex justify-between items-start mb-2">
-                        <div class="flex items-center gap-2">
-                            <div class="w-7 h-7 bg-slate-100 rounded-full flex items-center justify-center text-[10px] font-bold text-slate-600">${r.user.substring(0,1)}</div>
-                            <span class="font-bold text-xs">${r.user}</span>
-                        </div>
-                        <span class="text-[10px] text-slate-400 font-medium">${r.time}</span>
-                    </div>
-                    <div class="bg-slate-50 p-2 rounded-lg mb-2">
-                        <p class="text-[11px] text-slate-600"><i class="fas fa-map-marker-alt text-emerald-500 mr-1"></i> ${r.location}</p>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-[9px] font-bold px-2 py-1 rounded-lg ${getStatusStyle(r.status)}">${r.status.toUpperCase()}</span>
-                        <span class="text-[10px] font-bold text-slate-400">#${r.type.replace(' ','')}</span>
-                    </div>
-                </div>
-            `).join('');
-            document.getElementById('active-issues-count').innerText = reports.filter(r => r.status !== 'Resolved').length + 138; // 138 is baseline
-        }
+        // Close suggestions on outside click
+        document.addEventListener('click', (e) => {
+            if (!cityInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
+                suggestionsBox.classList.add('hidden');
+            }
+        });
 
-        function getStatusStyle(status) {
-            switch(status) {
-                case 'Resolved': return 'bg-emerald-100 text-emerald-700';
-                case 'In Progress': return 'bg-blue-100 text-blue-700';
-                default: return 'bg-amber-100 text-amber-700';
+        cityInput.addEventListener('keypress', (e) => { 
+            if (e.key === 'Enter') {
+                suggestionsBox.classList.add('hidden');
+                getWeather(); 
+            }
+        });
+
+        // --- Existing Core Logic ---
+
+        async function fetchAIAdvice(weather, aqi) {
+            const aiLoader = document.getElementById('aiLoader');
+            const aiContent = document.getElementById('aiContent');
+            aiLoader.classList.remove('hidden');
+            aiContent.innerText = "Analyzing environmental vectors...";
+
+            const key = API_KEY || FALLBACK_KEY;
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${key}`;
+            
+            const prompt = `System Data: Location ${weather.name}, Temp ${weather.main.temp}C, Wind ${weather.wind.speed}m/s, AQI Level ${aqi.list[0].main.aqi} (1-5 scale). 
+            Task: Provide a short, ultra-clean, 2-sentence safety protocol for this specific environment. 
+            Security: Remove all unwanted symbols, bullets, or markdown. Output plain text only. Be direct.`;
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: prompt }] }],
+                        systemInstruction: { parts: [{ text: "You are the EcoGuard AI Advisor. Use zero symbols or markdown. Deliver clean, professional safety advice." }] }
+                    })
+                });
+                
+                const data = await response.json();
+                let advice = data.candidates?.[0]?.content?.parts?.[0]?.text || "Environment stable. Proceed with standard protocols.";
+                aiContent.innerText = advice.replace(/[\*\#\-\_\>\n]/g, '').trim();
+            } catch (err) {
+                aiContent.innerText = "Error syncing with AI satellite. Follow standard safety procedures.";
+            } finally {
+                aiLoader.classList.add('hidden');
             }
         }
 
-        function openReportModal() { document.getElementById('reportModal').style.display = 'flex'; }
-        function closeReportModal() { document.getElementById('reportModal').style.display = 'none'; }
+        async function getWeather() {
+            const city = cityInput.value.trim();
+            if (!city) { showError("Identity required."); return; }
 
-        document.getElementById('issueForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const location = document.getElementById('issueLocation').value;
-            const type = document.getElementById('issueType').value;
+            toggleLoading(true);
+            hideError();
 
-            reports.unshift({
-                id: Date.now(),
-                user: "You (Citizen)",
-                type: type,
-                location: location,
-                status: "Pending",
-                time: "Just now"
-            });
+            try {
+                const geoRes = await fetch(`https://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=1&appid=${WEATHER_KEY}`);
+                const geoData = await geoRes.json();
+                if (geoData.length === 0) throw new Error("Null coordinate result.");
 
-            renderReports();
-            closeReportModal();
+                const { lat, lon, name, country } = geoData[0];
+                const [wRes, aRes] = await Promise.all([
+                    fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${WEATHER_KEY}`),
+                    fetch(`https://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${WEATHER_KEY}`)
+                ]);
 
-            const toast = document.getElementById('successToast');
-            toast.style.display = 'flex';
-            setTimeout(() => { toast.style.display = 'none'; }, 4000);
-        });
+                const wData = await wRes.json();
+                const aData = await aRes.json();
 
-        window.onload = () => {
-            renderBins();
-            renderReports();
+                updateUI(wData, name, country);
+                updateAQI(aData);
+                processSafetyScore(wData, aData);
+                fetchAIAdvice(wData, aData);
+
+            } catch (err) {
+                showError(err.message);
+            } finally {
+                toggleLoading(false);
+            }
+        }
+
+        function updateUI(data, cityName, country) {
+            document.getElementById('emptyState').classList.add('hidden');
+            document.getElementById('mainGrid').classList.remove('hidden');
+            document.getElementById('locationName').innerText = `${cityName.toUpperCase()} // ${country}`;
+            document.getElementById('tempValue').innerText = `${Math.round(data.main.temp)}°`;
+            document.getElementById('humidityValue').innerText = `${data.main.humidity}%`;
+            document.getElementById('windValue').innerText = Math.round(data.wind.speed * 3.6);
+            document.getElementById('visibilityValue').innerText = (data.visibility / 1000).toFixed(1);
+            document.getElementById('conditionValue').innerText = data.weather[0].main;
+            document.getElementById('currentDate').innerText = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+
+            const iconMap = { '01': 'fa-sun text-amber-400', '02': 'fa-cloud-sun text-emerald-400', '03': 'fa-cloud text-zinc-400', '09': 'fa-cloud-showers-heavy text-blue-400', '11': 'fa-bolt-lightning text-amber-500' };
+            const prefix = data.weather[0].icon.substring(0, 2);
+            document.getElementById('weatherIcon').innerHTML = `<i class="fas ${iconMap[prefix] || 'fa-cloud'}"></i>`;
+        }
+
+        function updateAQI(data) {
+            const index = data.list[0].main.aqi;
+            const configs = {
+                1: { label: "Pure", text: "Optimal quality. Bio-systems safe.", color: "text-emerald-400" },
+                2: { label: "Fair", text: "Minor particles detected.", color: "text-blue-400" },
+                3: { label: "Mid", text: "Moderate pollutants in air.", color: "text-amber-400" },
+                4: { label: "Poor", text: "Particulates high. Stay alert.", color: "text-orange-500" },
+                5: { label: "Toxic", text: "Hazardous. Active filtration needed.", color: "text-red-500" }
+            };
+            const config = configs[index];
+            document.getElementById('aqiValue').innerText = `LEVEL 0${index}`;
+            const statusEl = document.getElementById('aqiStatus');
+            statusEl.innerText = config.label;
+            statusEl.className = `text-[10px] font-black uppercase bg-zinc-800 ${config.color} px-2 py-1 rounded`;
+            document.getElementById('aqiDesc').innerText = config.text;
+        }
+
+        function processSafetyScore(weather, aqi) {
+            let score = 100;
+            const wind = weather.wind.speed * 3.6;
+            const aqiIdx = aqi.list[0].main.aqi;
             
-            // Simulation logic
-            setInterval(() => {
-                const idx = Math.floor(Math.random() * binData.length);
-                if(binData[idx].fill < 100) {
-                    binData[idx].fill = Math.min(100, binData[idx].fill + 2);
-                    renderBins();
-                }
-            }, 3000);
-        };
+            if (wind > 30) score -= 20;
+            if (aqiIdx >= 4) score -= 30;
+            if (weather.weather[0].main.toLowerCase().includes('rain')) score -= 15;
+            
+            score = Math.max(0, score);
+            document.getElementById('scoreRing').style.strokeDashoffset = 440 - (440 * score) / 100;
+            document.getElementById('scoreText').innerText = score;
+            
+            const safetyLevel = document.getElementById('safetyLevel');
+            if (score > 80) { safetyLevel.innerText = "OPTIMAL FOR OUTDOORS"; safetyLevel.className = "mt-6 text-sm font-bold text-emerald-500"; }
+            else if (score > 50) { safetyLevel.innerText = "CAUTION ADVISED"; safetyLevel.className = "mt-6 text-sm font-bold text-amber-500"; }
+            else { safetyLevel.innerText = "CRITICAL: STAY INDOORS"; safetyLevel.className = "mt-6 text-sm font-bold text-red-500"; }
+        }
+
+        function toggleLoading(isLoading) {
+            loader.classList.toggle('hidden', !isLoading);
+            btnText.classList.toggle('hidden', isLoading);
+            searchBtn.disabled = isLoading;
+        }
+
+        function showError(msg) {
+            const errorBox = document.getElementById('errorBox');
+            document.getElementById('errorMsg').innerText = msg;
+            errorBox.classList.remove('hidden');
+            setTimeout(() => errorBox.classList.add('hidden'), 4000);
+        }
+
+        function hideError() { document.getElementById('errorBox').classList.add('hidden'); }
     </script>
 </body>
 </html>
